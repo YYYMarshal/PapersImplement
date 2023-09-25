@@ -18,6 +18,7 @@ PapersWithCode：https://paperswithcode.com/paper/iq-learn-inverse-soft-q-learni
 conda create -n IQLearn python=3.8
 conda activate IQLearn
 
+# 路径需替换成自己文件所在的路径（下面那一处也同样）
 pip install -r S:\YYYXUEBING\Project\PyCharm\Papers\IQ-Learn-main\iq_learn\requirements.txt
 # 先把上面的执行成功后，再安装下面的 torchvision==0.8.2，因为直接 pip install torchvision==0.8.2，会显示无法下载，所以我就先下载下来了 .whl 文件，然后再本地安装了。
 # torch 相关的 .whl 文件下载地址：https://download.pytorch.org/whl/torch_stable.html

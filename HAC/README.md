@@ -18,6 +18,7 @@ PapersWithCode：https://paperswithcode.com/paper/learning-multi-level-hierarchi
 conda create -n HAC python=3.6
 conda activate HAC
 
+# 路径需替换成自己文件所在的路径
 pip install -r S:\YYYXUEBING\Project\PyCharm\Papers\Hierarchical-Actor-Critic-HAC-PyTorch-master\requirements.txt
 ```
 
