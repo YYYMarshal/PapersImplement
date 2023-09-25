@@ -7,8 +7,8 @@
 
 # 论文与文件夹的对应表
 
-| 论文                                            | 文件夹  |
-| ----------------------------------------------- | ------- |
-| Learning Multi-Level Hierarchies with Hindsight | HAC     |
-| IQ-Learn: Inverse soft-Q Learning for Imitation | IQLearn |
+| 论文                                            | 文件夹  | 发表时间            | 期刊/会议/出版社 |
+| ----------------------------------------------- | ------- | ------------------- | ---------------- |
+| Learning Multi-Level Hierarchies with Hindsight | HAC     | 2017(v1) - 2019(v5) | arXiV            |
+| IQ-Learn: Inverse soft-Q Learning for Imitation | IQLearn | 2021                | NeurIPS          |
 
