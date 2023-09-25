@@ -1,0 +1,18 @@
+# @package _global_
+
+env:
+  name: LunarLander-v2
+  demo: LunarLander-v2_1000
+  learn_steps: 1e6
+  eval_interval: 1e3
+
+expert:
+  demos: 1
+  subsample_freq: 5
+
+eval:
+  policy: 
+  threshold: 500
+
+q_net:
+  _target_: agent.softq_models.OfflineQNetwork

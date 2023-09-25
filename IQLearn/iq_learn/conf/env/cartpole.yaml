@@ -1,0 +1,18 @@
+# @package _global_
+
+env:
+  name: CartPole-v1
+  demo: CartPole-v1_1000 # Expert demo containing upto 1000 trajectories
+  learn_steps: 1e5
+  eval_interval: 1e3
+
+expert:
+  demos: 1
+  subsample_freq: 20
+
+eval:
+  policy: 
+  threshold: 500
+
+q_net:
+  _target_: agent.softq_models.OfflineQNetwork
