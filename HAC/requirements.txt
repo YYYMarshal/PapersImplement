@@ -1,0 +1,4 @@
+gym==0.18.3
+torch==1.10.2
+pyglet
+six
