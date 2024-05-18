@@ -17,7 +17,7 @@ import tyro
 @dataclass
 class Args:
     # Environment name : DoubleInvertedPendulum, PointMaze or AntPush
-    env_name: str = "DoubleInvertedPendulum"
+    env_name: str = "PointMaze"
     # Sets Gym, PyTorch and Numpy seeds
     seed: int = 0
     # How often (time steps) we evaluate
@@ -75,7 +75,7 @@ def main():
     # args = get_args()
     args = tyro.cli(Args)
     # file_name = "%s%s" % (args.env_name, str(args.seed))
-    file_name = f"{args.env_name}{args.seed}"
+    file_name = f"{args.env_name}_{args.seed}"
 
     if args.env_name == "AntPush":
         args.max_steps = 3e6
@@ -226,6 +226,7 @@ def show_result(env_name: str, evaluation_achieve, evaluation_reward):
     # seed = 0，平均值：9.02, -190.93
     # seed = 0，平均值：9.16, -172.34
     # seed = 0，平均值：9.31, -160.04
+    # seed = 0，平均值：9.08, -195.55
 
     # DoubleInvertedPendulum
     # 平均值：9.9, -13.99
