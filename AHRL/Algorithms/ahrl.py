@@ -75,7 +75,7 @@ class AHRL(object):
             self.critic_optimizer.step()
 
             if it % self.args.policy_frequency == 0:
-                actor_loss = -self.critic.Q1(state, self.actor(state)).mean()
+                actor_loss = -self.critic.get_q1_value(state, self.actor(state)).mean()
 
                 self.actor_optimizer.zero_grad()
                 actor_loss.backward()
