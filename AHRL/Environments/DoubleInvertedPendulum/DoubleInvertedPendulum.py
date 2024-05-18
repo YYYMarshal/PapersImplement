@@ -1,7 +1,7 @@
 """Adapted from gym/envs/mujoco/inverted_double_pendulum.py"""
 import numpy as np
 from gym import utils
-from AHRL.Environments.DoubleInvertedPendulum import mujoco_env
+from Environments.DoubleInvertedPendulum import mujoco_env
 
 current_y = 0
 

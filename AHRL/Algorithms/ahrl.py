@@ -19,7 +19,6 @@ class AHRL(object):
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=1e-3, weight_decay=0.0001)
 
-
         if torch.cuda.is_available():
             self.actor = self.actor.cuda()
             self.actor_target = self.actor_target.cuda()
@@ -32,7 +31,6 @@ class AHRL(object):
         self.scale = scale
         self.args = args
 
-
     def select_action(self, state, to_numpy=True):
         state = getTensor.get_tensor(state)
 
@@ -41,10 +39,9 @@ class AHRL(object):
         else:
             return self.actor(state).squeeze()
 
-
-    def train(self,  weight, replay_buffer, iterations, args):
+    def train(self, weight, replay_buffer, iterations, args):
         for it in range(iterations):
-            state, next_state, episode_num, u, intrinsic_reward, d= replay_buffer.sample(args.batch_size)
+            state, next_state, episode_num, u, intrinsic_reward, d = replay_buffer.sample(args.batch_size)
 
             "The weighted intrinsic_reward"
             weight_row = episode_num[:, 0]
@@ -52,7 +49,7 @@ class AHRL(object):
             weight_temp = weight[weight_row, weight_col]
             weight_temp = weight_temp.reshape(args.batch_size, 1)
             intrinsic_reward = intrinsic_reward.reshape(args.batch_size, 1)
-            reward = np.multiply(weight_temp,intrinsic_reward)
+            reward = np.multiply(weight_temp, intrinsic_reward)
             """"""""""""
 
             state = getTensor.get_tensor(state)
@@ -77,7 +74,7 @@ class AHRL(object):
             critic_loss.backward()
             self.critic_optimizer.step()
 
-            if it % self.args.policy_freq == 0:
+            if it % self.args.policy_frequency == 0:
                 actor_loss = -self.critic.Q1(state, self.actor(state)).mean()
 
                 self.actor_optimizer.zero_grad()
@@ -89,10 +86,8 @@ class AHRL(object):
                 for param, target_param in zip(self.actor.parameters(), self.actor_target.parameters()):
                     target_param.data.copy_(args.tau * param.data + (1 - args.tau) * target_param.data)
 
-
     def save(self, filename, directory):
         torch.save(self.actor.state_dict(), '%s/%s_Actor.pth' % (directory, filename))
-
 
     def load(self, filename, directory):
         self.actor.load_state_dict(torch.load('%s/%s_Actor.pth' % (directory, filename)))
