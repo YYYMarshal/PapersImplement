@@ -2,8 +2,8 @@ import os, gym
 import tempfile
 import xml.etree.ElementTree as ET
 import numpy as np
-from Environments.AntPush import maze_env_utils
-from Environments.AntPush.ant import AntEnv
+from AHRL.Environments.AntPush import maze_env_utils
+from AHRL.Environments.AntPush.ant import AntEnv
 # Directory that contains mujoco xml files.
 
 

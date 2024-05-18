@@ -169,17 +169,12 @@ def main():
 
 def show_result(env_name: str, evaluation_achieve, evaluation_reward):
     # PointMaze
-    # 平均值：
-    # 9.02
-    # -190.93
+    # 平均值：9.02, -190.93
+    # 平均值：9.16, -172.34
 
     # DoubleInvertedPendulum
-    # 平均值：
-    # 9.9
-    # -13.99
-    print("平均值：")
-    print(np.mean(evaluation_achieve))
-    print(np.mean(evaluation_reward))
+    # 平均值：9.9, -13.99
+    print(f"平均值：{np.mean(evaluation_achieve)}, {np.mean(evaluation_reward)}")
     algorithm = "AHRL"
     xlabel = "Training Steps(×5000)"
 

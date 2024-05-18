@@ -17,8 +17,8 @@
 import os, gym, math, tempfile
 import numpy as np
 import xml.etree.ElementTree as ET
-from Environments.PointMaze import maze_env_utils
-from Environments.PointMaze.point import PointEnv
+from AHRL.Environments.PointMaze import maze_env_utils
+from AHRL.Environments.PointMaze.point import PointEnv
 # Directory that contains mujoco xml files.
 
 
@@ -226,7 +226,12 @@ class PointMazeEnv(gym.Env):
     goal_xy = tree.find(".//geom[@name='target']").attrib["pos"].split()
     self.goal_xy = np.array([float(goal_xy[0]), float(goal_xy[1])])
 
-    _, file_path = tempfile.mkstemp(text=True, suffix=".xml")
+    """ ===YYY=== """
+    # _, file_path = tempfile.mkstemp(text=True, suffix=".xml")
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+    # 指定文件路径和名称
+    file_path = os.path.join(desktop_path, "AHRL_Env_PointMaze.xml")
+    """ ===YYY=== """
     tree.write(file_path)
 
     self.wrapped_env = model_cls(*args, file_path=file_path, **kwargs)
