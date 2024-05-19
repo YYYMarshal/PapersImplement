@@ -17,7 +17,7 @@ import tyro
 @dataclass
 class Args:
     # Environment name : DoubleInvertedPendulum, PointMaze or AntPush
-    env_name: str = "PointMaze"
+    env_name: str = "AntPush"
     # Sets Gym, PyTorch and Numpy seeds
     seed: int = 0
     # How often (time steps) we evaluate
@@ -74,18 +74,19 @@ def main():
     start_time = time.time()
     # args = get_args()
     args = tyro.cli(Args)
-    # file_name = "%s%s" % (args.env_name, str(args.seed))
-    file_name = f"{args.env_name}_{args.seed}"
 
+    """ Environment """
     if args.env_name == "AntPush":
         args.max_steps = 3e6
+        args.seed = 50
         env = AntPushEnv()
     elif args.env_name == "PointMaze":
         env = PointMazeEnv()
     else:
         env = DoubleInvertedPendulumEnv()
 
-    """ Environment """
+    # file_name = "%s%s" % (args.env_name, str(args.seed))
+    file_name = f"{args.env_name}_{args.seed}"
     max_episode_step = env.max_step()
     obs = env.reset()
     state = obs["state"]
