@@ -19,67 +19,69 @@ import wandb
 
 @dataclass
 class Args:
-    """the name of this experiment"""
+    # the name of this experiment
     exp_name: str = os.path.basename(__file__)[: -len(".py")]
-    """seed of the experiment"""
+    # seed of the experiment
     seed: int = 1
-    """if toggled, `torch.backends.cudnn.deterministic=False`"""
+    # if toggled, `torch.backends.cudnn.deterministic=False`
     torch_deterministic: bool = True
-    """if toggled, cuda will be enabled by default"""
+    # if toggled, cuda will be enabled by default
     cuda: bool = True
-    """if toggled, this experiment will be tracked with Weights and Biases"""
+    # if toggled, this experiment will be tracked with Weights and Biases
     track: bool = False
-    """the wandb's project name"""
+    # the wandb's project name
     wandb_project_name: str = "cleanRL"
-    """the entity (team) of wandb's project"""
+    # the entity (team) of wandb's project
     wandb_entity: str = None
-    """whether to capture videos of the agent performances (check out `videos` folder)"""
+    # whether to capture videos of the agent performances (check out `videos` folder)
     capture_video: bool = False
 
-    # Algorithm specific arguments
-    """the id of the environment"""
+    """ Algorithm specific arguments """
+    # the id of the environment
     env_id: str = "HalfCheetah-v4"
-    """total timesteps of the experiments"""
+    # env_id: str = "Humanoid-v4"
+
+    # total timesteps of the experiments
     total_timesteps: int = 8000000
-    """the learning rate of the optimizer"""
+    # the learning rate of the optimizer
     learning_rate: float = 3e-4
-    """the number of parallel game environments"""
+    # the number of parallel game environments
     num_envs: int = 1
-    """the number of steps to run in each environment per policy rollout"""
+    # the number of steps to run in each environment per policy rollout
     num_steps: int = 2048
-    """Toggle learning rate annealing for policy and value networks"""
+    # Toggle learning rate annealing for policy and value networks
     anneal_lr: bool = True
-    """the discount factor gamma"""
+    # the discount factor gamma
     gamma: float = 0.99
-    """the lambda for the general advantage estimation"""
+    # the lambda for the general advantage estimation
     gae_lambda: float = 0.95
-    """the number of mini-batches"""
+    # the number of mini-batches
     num_minibatches: int = 32
-    """the K epochs to update the policy"""
+    # the K epochs to update the policy
     update_epochs: int = 10
-    """Toggles advantages normalization"""
+    # Toggles advantages normalization
     norm_adv: bool = True
-    """the surrogate clipping coefficient"""
+    # the surrogate clipping coefficient
     clip_coef: float = 0.2
-    """Toggles whether or not to use a clipped loss for the value function, as per the paper."""
+    # Toggles whether or not to use a clipped loss for the value function, as per the paper.
     clip_vloss: bool = True
-    """coefficient of the entropy"""
+    # coefficient of the entropy
     ent_coef: float = 0.0
-    """coefficient of the value function"""
+    # coefficient of the value function
     vf_coef: float = 0.5
-    """the maximum norm for the gradient clipping"""
+    # the maximum norm for the gradient clipping
     max_grad_norm: float = 0.5
-    """the target KL divergence threshold"""
+    # the target KL divergence threshold
     target_kl: float = None
-    """the alpha parameter for RPO"""
+    # the alpha parameter for RPO
     rpo_alpha: float = 0.5
 
-    # to be filled in runtime
-    """the batch size (computed in runtime)"""
+    """ to be filled in runtime """
+    # the batch size (computed in runtime)
     batch_size: int = 0
-    """the mini-batch size (computed in runtime)"""
+    # the mini-batch size (computed in runtime)
     minibatch_size: int = 0
-    """the number of iterations (computed in runtime)"""
+    # the number of iterations (computed in runtime)
     num_iterations: int = 0
 
 
@@ -90,7 +92,8 @@ def make_env(env_id, idx, capture_video, run_name, gamma):
             env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
         else:
             env = gym.make(env_id)
-        env = gym.wrappers.FlattenObservation(env)  # deal with dm_control's Dict observation space
+        # deal with dm_control's Dict observation space
+        env = gym.wrappers.FlattenObservation(env)
         env = gym.wrappers.RecordEpisodeStatistics(env)
         env = gym.wrappers.ClipAction(env)
         env = gym.wrappers.NormalizeObservation(env)
@@ -140,7 +143,7 @@ class Agent(nn.Module):
             action = probs.sample()
         else:  # new to RPO
             # sample again to add stochasticity to the policy
-            z = torch.FloatTensor(action_mean.shape).uniform_(-self.rpo_alpha,self.rpo_alpha).to(device)
+            z = torch.FloatTensor(action_mean.shape).uniform_(-self.rpo_alpha, self.rpo_alpha).to(device)
             action_mean = action_mean + z
             probs = Normal(action_mean, action_std)
 
@@ -334,10 +337,9 @@ def main():
 
     envs.close()
     writer.close()
-    # [27845816.]
-    # 27845816.0
-    print(yyy_total_return)
-    print(np.mean(yyy_total_return))
+    # [27845816.], 27845816.0
+    # [27845816.], 27845816.0
+    print(yyy_total_return, np.mean(yyy_total_return))
 
 
 if __name__ == "__main__":

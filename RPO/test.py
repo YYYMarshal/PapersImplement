@@ -1,5 +1,6 @@
 import gymnasium as gym
 import torch
+from torch.utils.tensorboard import SummaryWriter
 
 
 def fun1():
@@ -62,4 +63,14 @@ def fun6():
     print(x.argmax().item())
 
 
-fun6()
+def fun7():
+    writer = SummaryWriter("test_logs")
+    for i in range(101):
+        writer.add_scalar("y = x * x", i * i, i)
+    for i in range(101):
+        writer.add_scalar("y = x + 10", i + 10, i)
+
+    writer.close()
+
+
+fun7()
