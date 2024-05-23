@@ -1,3 +1,15 @@
+Robust Policy Optimization in Deep Reinforcement Learning
+
+# 链接
+
+[PapersWithCode](https://paperswithcode.com/paper/robust-policy-optimization-in-deep)
+
+[PDF](https://arxiv.org/pdf/2212.07536v1)
+
+[GitHub（非原作者）- CleanRL](https://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/rpo_continuous_action.py#L102)
+
+# 环境配置
+
 ```cmd
 conda create -n RPO python=3.8
 conda activate RPO
