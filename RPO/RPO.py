@@ -15,6 +15,7 @@ import tyro
 from torch.distributions.normal import Normal
 from torch.utils.tensorboard import SummaryWriter
 import wandb
+from datetime import datetime
 
 
 @dataclass
@@ -34,7 +35,7 @@ class Args:
     # the entity (team) of wandb's project
     wandb_entity: str = None
     # whether to capture videos of the agent performances (check out `videos` folder)
-    capture_video: bool = False
+    capture_video: bool = True
 
     """ Algorithm specific arguments """
     # the id of the environment
@@ -42,7 +43,8 @@ class Args:
     # env_id: str = "Humanoid-v4"
 
     # total timesteps of the experiments
-    total_timesteps: int = 8000000
+    # 8000000
+    total_timesteps: int = 800_0000
     # the learning rate of the optimizer
     learning_rate: float = 3e-4
     # the number of parallel game environments
@@ -181,9 +183,10 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
 
     # env setup
-    envs = gym.vector.SyncVectorEnv(
-        [make_env(args.env_id, i, args.capture_video, run_name, args.gamma) for i in range(args.num_envs)]
-    )
+    # Create a list of environment functions
+    env_fns = [make_env(args.env_id, i, args.capture_video, run_name, args.gamma) for i in range(args.num_envs)]
+    # Use SyncVectorEnv to create and manage multiple environments
+    envs = gym.vector.SyncVectorEnv(env_fns)
     assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
 
     agent = Agent(envs, args.rpo_alpha).to(device)
@@ -205,7 +208,7 @@ def main():
     next_done = torch.zeros(args.num_envs).to(device)
     num_updates = args.total_timesteps // args.batch_size
 
-    yyy_total_return = 0
+    yyy_total_return = []
     for update in range(1, num_updates + 1):
         # Annealing the rate if instructed to do so.
         if args.anneal_lr:
@@ -235,7 +238,7 @@ def main():
                 for info in infos["final_info"]:
                     if info and "episode" in info:
                         print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
-                        yyy_total_return += info['episode']['r']
+                        yyy_total_return.append(info['episode']['r'])
                         writer.add_scalar("charts/episodic_return", info["episode"]["r"], global_step)
                         writer.add_scalar("charts/episodic_length", info["episode"]["l"], global_step)
 
@@ -339,8 +342,36 @@ def main():
     writer.close()
     # [27845816.], 27845816.0
     # [27845816.], 27845816.0
-    print(yyy_total_return, np.mean(yyy_total_return))
+    print(np.mean(yyy_total_return))
+    np.save("total_return", yyy_total_return)
+
+
+def get_current_time():
+    """
+    显示当前时间的时分秒格式
+    """
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%H:%M:%S")
+    print(f"当前时间：{formatted_time}")
+    return current_time
+
+
+def time_difference(start_time):
+    """
+    计算当前时间减去给定时间的时间差
+    """
+    current_time = get_current_time()
+    time_diff = current_time - start_time
+    return time_diff
+
+
+def main_timer():
+    start_time = get_current_time()
+    main()
+    cost_time = time_difference(start_time)
+    # 用时：4:56:05.118420
+    print(f"用时：{cost_time}")
 
 
 if __name__ == "__main__":
-    main()
+    main_timer()
