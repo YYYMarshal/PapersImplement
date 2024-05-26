@@ -342,8 +342,9 @@ def main():
     writer.close()
     # [27845816.], 27845816.0
     # [27845816.], 27845816.0
+    # 3481.1597
     print(np.mean(yyy_total_return))
-    np.save("total_return", yyy_total_return)
+    np.save(f"total_return_{args.env_id}", yyy_total_return)
 
 
 def get_current_time():
@@ -370,6 +371,7 @@ def main_timer():
     main()
     cost_time = time_difference(start_time)
     # 用时：4:56:05.118420
+    # 用时：4:27:05.128889
     print(f"用时：{cost_time}")
 
 
