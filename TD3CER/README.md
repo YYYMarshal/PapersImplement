@@ -10,11 +10,10 @@
 conda create -n TD3CER python=3.8
 conda activate TD3CER
 pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
+pip install gym==0.17.3
+pip install scikit-learn
 pip3 install -U 'mujoco-py<2.2,>=2.1'
-
-pip install gym[mujoco]
-pip install gym
-pip install gym[classic_control]
+pip install "cython<3"
 ```
 
 

@@ -32,7 +32,7 @@ def eval_policy(policy, env_name, seed, eval_episodes=10):
     return avg_reward
 
 
-def no_noise(policy, env_name, seed, replay_buffer):
+def no_noise(env, policy, env_name, seed, replay_buffer):
     eval_env = gym.make(env_name)
     eval_env.seed(seed + 100)
     episode_timesteps = 0
@@ -49,6 +49,29 @@ def no_noise(policy, env_name, seed, replay_buffer):
         avg_reward += reward
 
     print(avg_reward)
+
+
+from datetime import datetime
+
+
+def get_current_time():
+    """
+    显示当前时间的时分秒格式
+    """
+    current_time = datetime.now()
+    formatted_time = current_time.strftime("%H:%M:%S")
+    print(f"当前时间：{formatted_time}")
+    return current_time
+
+
+def time_difference(start_time):
+    """
+    计算当前时间减去给定时间的时间差
+    """
+    current_time = get_current_time()
+    time_diff = current_time - start_time
+    print(f"用时：{time_diff}")
+    return time_diff
 
 
 def main():
@@ -75,7 +98,7 @@ def main():
 
     file_name = "%s_%s_%s" % (args.policy_name, args.env_name, str(args.seed))
     print("---------------------------------------")
-    print("Settings: %s" % (file_name))
+    print("Settings: %s" % file_name)
     print("---------------------------------------")
     if not os.path.exists("./results"):
         os.makedirs("./results")
@@ -181,7 +204,7 @@ def main():
 
             index = BufferList[k].Choose_sample(labels)
             kinds_i = [0]
-            ind = np.zeros((0), dtype=int)
+            ind = np.zeros(0, dtype=int)
 
             for i in range(len(index)):
                 kinds_i.append(kinds_i[i] + len(index[i]) - 1)
@@ -197,7 +220,8 @@ def main():
                                   1 - temp_sample[i][4])
 
         # Train agent after collecting sufficient data
-        if t >= args.batch_size and t < args.cluster_num:
+        # if t >= args.batch_size and t < args.cluster_num:
+        if args.batch_size <= t < args.cluster_num:
             policy.train(BufferList[0], args.batch_size, kinds_number, 0)
 
         if t >= args.cluster_num:
@@ -210,8 +234,10 @@ def main():
 
         if done:
             # +1 to account for 0 indexing. +0 on ep_timesteps since it will increment +1 even if done=True
-            print(("Total T: %d Episode Num: %d Episode T: %d Reward: %.3f") % (
-                t + 1, episode_num + 1, episode_timesteps, episode_reward))
+            # print(("Total T: %d Episode Num: %d Episode T: %d Reward: %.3f") % (
+            #     t + 1, episode_num + 1, episode_timesteps, episode_reward))
+            print(f"Total T: {t + 1} Episode Num: {episode_num + 1} "
+                  f"Episode T: {episode_timesteps} Reward: {episode_reward}")
             # print(f"Total T: {t+1} Episode Num: {episode_num+1} Episode T: {episode_timesteps} Reward: {episode_reward:.3f}")
             # Reset environment
             state, done = env.reset(), False
@@ -222,16 +248,18 @@ def main():
             ii1 = int((t + 1e3) // args.cluster_num)
             if t > 2 * args.start_timesteps:
                 if ii == ii1:
-                    no_noise(policy, args.env_name, args.seed, BufferList[ii])
+                    no_noise(env, policy, args.env_name, args.seed, BufferList[ii])
                 else:
-                    no_noise(policy, args.env_name, args.seed, BufferList[ii])
-                    no_noise(policy, args.env_name, args.seed, BufferList[ii1])
+                    no_noise(env, policy, args.env_name, args.seed, BufferList[ii])
+                    no_noise(env, policy, args.env_name, args.seed, BufferList[ii1])
 
         # Evaluate episode
         if (t + 1) % args.eval_freq == 0:
             evaluations.append(eval_policy(policy, args.env_name, args.seed))
-            np.save("./results/%s" % (file_name), evaluations)
+            np.save("./results/%s" % file_name, evaluations)
 
 
 if __name__ == "__main__":
+    start_time = get_current_time()
     main()
+    time_difference(start_time)
