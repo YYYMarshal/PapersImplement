@@ -2,7 +2,7 @@
 
 2023-9-25 20:48:13
 
-* 每篇文章的论文 arXiV 链接、GItHub 链接和 PapersWithCode 链接都放在了各自文件夹的 README.md 文件中。
+* 每篇文章的论文 arXiv 链接、GItHub 链接和 PapersWithCode 链接都放在了各自文件夹的 README.md 文件中。
 * 各个文章对应的代码的环境配置，也在各自文件夹的 README.md 文件中。
 
 2024-5-18 22:15:55
@@ -16,5 +16,6 @@
 | Learning Multi-Level Hierarchies with Hindsight              | HAC     | 2017(v1) - 2019(v5) | arXiv                                      |
 | IQ-Learn: Inverse soft-Q Learning for Imitation              | IQLearn | 2021                | NeurIPS(CCF A)                             |
 | Anchor: The achieved goal to replace the subgoal for hierarchical reinforcement learning | AHRL    | 2021.8              | Knowledge-Based Systems(中科院1区，JCR Q1) |
+| Clustering experience replay for the effective exploitation in reinforcement learning | TD3CER  | 2022.11             | Pattern Recognition(中科院1区)             |
 | Robust Policy Optimization in Deep Reinforcement Learning    | RPO     | 2022.12             | arXiv                                      |
 
