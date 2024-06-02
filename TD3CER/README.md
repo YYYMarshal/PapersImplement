@@ -14,6 +14,8 @@ pip install gym==0.17.3
 pip install scikit-learn
 pip3 install -U 'mujoco-py<2.2,>=2.1'
 pip install "cython<3"
+# 绘图
+pip install matplotlib
 ```
 
 

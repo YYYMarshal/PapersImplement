@@ -95,6 +95,12 @@ def main():
     parser.add_argument("--km_num", default=3, type=int)
 
     args = parser.parse_args()
+    # HalfCheetah-v2    1:40+
+    args.env_name = "Walker2d-v3"  # 1:50+
+    args.env_name = "Ant-v3"  # 2:59
+    args.env_name = "Hopper-v3"  # 1:41
+    args.env_name = "Humanoid-v3"   # 2:48
+    args.env_name = "InvertedDoublePendulum-v2"   # 1:41
 
     file_name = "%s_%s_%s" % (args.policy_name, args.env_name, str(args.seed))
     print("---------------------------------------")
@@ -257,6 +263,24 @@ def main():
         if (t + 1) % args.eval_freq == 0:
             evaluations.append(eval_policy(policy, args.env_name, args.seed))
             np.save("./results/%s" % file_name, evaluations)
+
+
+def env_info():
+    env_name = "Ant-v3"
+    env = gym.make(env_name)
+    print(f"{env_name} {env._max_episode_steps}")
+
+    env_name = "HalfCheetah-v2"
+    env = gym.make(env_name)
+    print(f"{env_name} {env._max_episode_steps}")
+
+    env_name = "Hopper-v3"
+    env = gym.make(env_name)
+    print(f"{env_name} {env._max_episode_steps}")
+
+    env_name = "Walker2d-v2"
+    env = gym.make(env_name)
+    print(f"{env_name} {env._max_episode_steps}")
 
 
 if __name__ == "__main__":
