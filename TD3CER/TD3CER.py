@@ -1,5 +1,5 @@
 import copy
-import numpy as np
+# import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -49,7 +49,7 @@ class Critic(nn.Module):
         q2 = self.l6(q2)
         return q1, q2
 
-    def Q1(self, state, action):
+    def get_q1(self, state, action):
         sa = torch.cat([state, action], 1)
 
         q1 = F.relu(self.l1(sa))
@@ -103,14 +103,10 @@ class TD3(object):
 
         with torch.no_grad():
             # Select action according to policy and add clipped noise
-            noise = (
-                    torch.randn_like(action) * self.policy_noise
-            ).clamp(-self.noise_clip, self.noise_clip)
-
-            next_action = (
-                    self.actor_target(next_state) + noise
-            ).clamp(-self.max_action, self.max_action)
-
+            noise = (torch.randn_like(action) * self.policy_noise).clamp(-self.noise_clip, self.noise_clip)
+            # noise = torch.randn_like(action) * self.policy_noise
+            # noise = torch.clamp(torch.tensor(-self.noise_clip), self.noise_clip, noise)
+            next_action = (self.actor_target(next_state) + noise).clamp(-self.max_action, self.max_action)
             # Compute the target Q value
             target_Q1, target_Q2 = self.critic_target(next_state, next_action)
             target_Q = torch.min(target_Q1, target_Q2)
@@ -131,7 +127,7 @@ class TD3(object):
         if self.total_it % self.policy_freq == 0:
 
             # Compute actor losse
-            actor_loss = -self.critic.Q1(state, self.actor(state)).mean()
+            actor_loss = -self.critic.get_q1(state, self.actor(state)).mean()
 
             # Optimize the actor
             self.actor_optimizer.zero_grad()
