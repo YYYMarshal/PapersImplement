@@ -1,2 +1,7 @@
-log.txt
+.idea
+__pycache__
+
+preTrained
 *.pth
+
+log.txt
