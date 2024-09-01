@@ -34,6 +34,8 @@ pip install pip==0.24.0
 pip install gym==0.18.3
 ```
 
+==PyTorch 1.12.1, CUDA 11.3==
+
 ```cmd
 pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
 ```
@@ -48,6 +50,50 @@ pip install -r xxx\requirements.txt
 ```python
 pyglet
 six
+```
+
+==MuJoCo 相关==
+
+```cmd
+pip3 install -U 'mujoco-py<2.2,>=2.1'
+```
+
+运行下面的测试代码：
+
+```python
+import mujoco_py
+import os
+
+mj_path = mujoco_py.utils.discover_mujoco()
+xml_path = os.path.join(mj_path, 'model', 'humanoid.xml')
+model = mujoco_py.load_model_from_path(xml_path)
+sim = mujoco_py.MjSim(model)
+print(sim.data.qpos)
+sim.step()
+print(sim.data.qpos)
+```
+
+```cmd
+# ERROR！！！
+# Cython.Compiler.Errors.CompileError: xxx\mujoco210\lib\site-packages\mujoco_py\cymj.pyx
+pip install cython==0.29.21
+```
+
+```cmd
+# ERROR！！！
+# distutils.errors.CompileError: command 'gcc' failed with exit status 1
+
+# https://zhuanlan.zhihu.com/p/547442285
+sudo apt install libosmesa6-dev
+pip install patchelf
+
+# http://t.csdnimg.cn/CCfTX
+sudo apt install libgl1-mesa-glx --reinstall
+
+# Solution！！！
+# http://t.csdnimg.cn/9NCTu
+sudo apt install libosmesa6-dev libgl1-mesa-glx libglfw3
+sudo ln -s /usr/lib/x86_64-linux-gnu/libGL.so.1 /usr/lib/x86_64-linux-gnu/libGL.so
 ```
 
 
