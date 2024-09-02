@@ -9,8 +9,11 @@ class Actor(nn.Module):
     def __init__(self, state_dim, action_dim, action_bounds, offset):
         super(Actor, self).__init__()
         # actor
+        print("--- Actor.__init__() ---")
+        print(f"state_dim: {state_dim}, action_dim: {action_dim}")
         self.actor = nn.Sequential(
             nn.Linear(state_dim + state_dim, 64),
+            # nn.Linear(state_dim + 2, 64),
             nn.ReLU(),
             nn.Linear(64, 64),
             nn.ReLU(),
@@ -19,10 +22,19 @@ class Actor(nn.Module):
         )
         # max value of actions
         self.action_bounds = action_bounds
+        print("-------------------")
+        print(action_bounds.shape)
         self.offset = offset
 
     def forward(self, state, goal):
-        return (self.actor(torch.cat([state, goal], 1)) * self.action_bounds) + self.offset
+        print("--- Actor.forward() ---")
+        print(f"state: {state.shape}, goal: {goal.shape}")
+        cat = torch.cat([state, goal], 1)
+        print(f"cat: {cat.shape}")
+        actor = self.actor(cat)
+        print(f"actor: {actor.shape}, self.action_bounds: {self.action_bounds.shape}")
+        return actor * self.action_bounds + self.offset
+        # return (self.actor(torch.cat([state, goal], 1)) * self.action_bounds) + self.offset
 
 
 class Critic(nn.Module):

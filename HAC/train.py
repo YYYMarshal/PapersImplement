@@ -3,6 +3,7 @@ import gym
 import asset
 import numpy as np
 from HAC import HAC
+from envs.create_maze_env import create_maze_env
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -10,12 +11,16 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 def train():
     # Hyperparameters
     env_name = "MountainCarContinuous-h-v1"
+    # env_name = "AntFall"
     save_episode = 10  # keep saving every n episodes
     max_episodes = 1000  # max num of training episodes
     random_seed = 0
     render = False
 
     env = gym.make(env_name)
+    # env = create_maze_env(env_name)
+    print(env.observation_space.high)
+    print(env.observation_space.low)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.shape[0]
 
@@ -27,6 +32,7 @@ def train():
 
     # primitive action bounds and offset
     action_bounds = env.action_space.high[0]
+    print(f"Action bounds: {action_bounds}, action_bounds.shape: {action_bounds.shape}")
     action_offset = np.array([0.0])
     action_offset = torch.FloatTensor(action_offset.reshape(1, -1)).to(device)
     action_clip_low = np.array([-1.0 * action_bounds])
