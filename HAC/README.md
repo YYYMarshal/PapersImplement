@@ -30,7 +30,7 @@ conda activate HAC
 # http://t.csdnimg.cn/CRHK7
 # pip install --upgrade pip setuptools==57.5.0
 # pip install --upgrade pip wheel==0.37.0
-pip install pip==0.24.0
+pip install pip==24.0
 pip install gym==0.18.3
 ```
 
