@@ -12,11 +12,11 @@ def get_args():
     args.add_arg("device", 0, "Computing device")
     args.add_arg("tag", "default", "task description")
     args.parser()
-    
-    return args
-    
 
-if __name__ == '__main__':
+    return args
+
+
+def main():
     config = get_args()
     if config.env_name in ["AntMaze", "AntPush", "AntFall"]:
         args = default_config_maze
@@ -30,4 +30,7 @@ if __name__ == '__main__':
     args.update(config)
     agent = launch(args)
     agent.run()
-    
+
+
+if __name__ == '__main__':
+    main()

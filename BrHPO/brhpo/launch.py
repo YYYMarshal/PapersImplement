@@ -5,15 +5,18 @@ import torch
 import datetime
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
 from envs.antenv import EnvWithGoal, GatherEnv
 from envs.antenv.create_maze_env import create_maze_env
+from envs.antenv.create_gather_env import create_gather_env
 import shutil
 from .model.sac import SAC
 from .utils.replaybuffer import ReplayMemory
 from .algo import Algo
 
 import ipdb
+
 
 def get_env_params(env, args):
     obs = env.reset()
@@ -24,6 +27,7 @@ def get_env_params(env, args):
               'action_max': args.action_max,
               'max_steps': args.max_steps}
     return params
+
 
 def launch(args):
     if args.env_name == "AntGather":
@@ -53,12 +57,13 @@ def launch(args):
     env_params = get_env_params(env, args)
     low_reward_func = env.low_reward_func
     high_reward_func = env.high_reward_func
-    
-    
+
     # suppose subgoal_space = goal_space
     if args.env_name in ['Pusher-v0', 'Reacher3D-v0', 'AntMazeBottleneck-v0']:
-        high_agent = SAC(env.observation_space['observation'].shape[0], env.goal_space.shape[0], env.goal_space, args, 'high')
-        low_agent = SAC(env.observation_space['observation'].shape[0], env.goal_space.shape[0], env.action_space, args, 'low')
+        high_agent = SAC(env.observation_space['observation'].shape[0], env.goal_space.shape[0], env.goal_space, args,
+                         'high')
+        low_agent = SAC(env.observation_space['observation'].shape[0], env.goal_space.shape[0], env.action_space, args,
+                        'low')
     else:
         high_agent = SAC(env.observation_space.shape[0], env.goal_space.shape[0], env.goal_space, args, 'high')
         low_agent = SAC(env.observation_space.shape[0], env.goal_space.shape[0], env.action_space, args, 'low')
@@ -66,25 +71,24 @@ def launch(args):
         high_agent.load_checkpoint(args.model_path, args.model_i_epoch, 'high')
         low_agent.load_checkpoint(args.model_path, args.model_i_epoch, 'low')
     else:
-        log_path = './logs/{}/{}/{}_{}'.format(args.env_name, args.tag, 
-                                                      datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"), 
-                                                      args.seed)
+        log_path = './logs/{}/{}/{}_{}'.format(args.env_name, args.tag,
+                                               datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S"),
+                                               args.seed)
         os.makedirs(log_path)
         with open(os.path.join(log_path, "config.log"), 'w') as f:
             f.write(str(args))
-        
+
         shutil.copytree('.', log_path + '/code', ignore=shutil.ignore_patterns('logs', 'SAC_logs'))
         args.log_path = log_path
         args.model_path = log_path + '/model'
         os.makedirs(args.model_path)
     high_replay = ReplayMemory(args.high_replay_size, args.seed)
     low_replay = ReplayMemory(args.low_replay_size, args.seed)
-    
-    
+
     algo = Algo(
         env=env, env_params=env_params, args=args,
         test_env=test_env,
-        low_agent=low_agent, high_agent = high_agent, low_replay=low_replay, high_replay=high_replay, 
+        low_agent=low_agent, high_agent=high_agent, low_replay=low_replay, high_replay=high_replay,
         low_reward_func=low_reward_func, high_reward_func=high_reward_func
     )
     return algo

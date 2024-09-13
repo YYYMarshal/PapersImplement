@@ -16,6 +16,6 @@ if __name__ == '__main__':
     args.model_path = model_path
     args.model_i_epoch = result_epoch
     args.is_load = True
-    
+
     agent = launch(args)
     agent.run_eval_render()

@@ -16,7 +16,7 @@ default_config_maze = Config({
     "debug_mode": False,
     "is_load": False,
     "model_i_epoch": None,
-    
+
     # task config
     "env_name": "AntMaze",
     "temporal_horizon": 20,
@@ -27,7 +27,7 @@ default_config_maze = Config({
     "max_steps": 500,
     "goal_scale": 2,
     "low_reward_bonus": 10,
-    
+
     # policy config
     "high_replay_size": 100000,
     "low_replay_size": 1000000,
@@ -46,7 +46,7 @@ default_config_maze = Config({
     "tau": 0.005,
     "alpha": 0.2,
     "hidden_size": 256,
-    
+
 })
 
 default_config_manipulation = Config({
@@ -65,7 +65,7 @@ default_config_manipulation = Config({
     "debug_mode": False,
     "is_load": False,
     "model_i_epoch": None,
-    
+
     # task config
     "env_name": "Reacher3D",
     "temporal_horizon": 10,
@@ -76,7 +76,7 @@ default_config_manipulation = Config({
     "max_steps": 100,
     "goal_scale": 2,
     "low_reward_bonus": 0.1,
-    
+
     # policy config
     "high_replay_size": 100000,
     "low_replay_size": 1000000,
@@ -95,5 +95,5 @@ default_config_manipulation = Config({
     "tau": 0.005,
     "alpha": 0.2,
     "hidden_size": 256,
-    
+
 })

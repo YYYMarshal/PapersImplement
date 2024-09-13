@@ -60,9 +60,10 @@ class ARGConfig(Config):
         for k in self._arg_dict:
             arg_name = k.replace(' ', '_').replace('-', '_')
             help_msg = self._arg_help[k] if k in self._arg_help else ""
-            parser.add_argument(f"--{arg_name}", type=str,
-                                default=self._arg_dict[k] if isinstance(self._arg_dict[k], str) else repr(self._arg_dict[k]),
-                                help=help_msg)
+            parser.add_argument(
+                f"--{arg_name}", type=str,
+                default=self._arg_dict[k] if isinstance(self._arg_dict[k], str) else repr(self._arg_dict[k]),
+                help=help_msg)
 
         pared_args = parser.parse_args().__dict__
 
