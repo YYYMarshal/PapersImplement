@@ -1,9 +1,10 @@
-import os
+# import os
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
 from .utils import soft_update, hard_update
 from .model import GaussianPolicy, QNetwork
+
 
 class SAC(object):
     def __init__(self, num_states, num_goals, action_space, args, label):
@@ -14,7 +15,6 @@ class SAC(object):
         self.goal_scale = args.goal_scale
         self.label = label
 
-
         self.target_update_interval = args.target_update_interval
         self.automatic_entropy_tuning = args.automatic_entropy_tuning
 
@@ -22,7 +22,6 @@ class SAC(object):
 
         self.critic = QNetwork(num_states, num_goals, action_space.shape[0], args.hidden_size).to(device=self.device)
         self.critic_optim = Adam(self.critic.parameters(), lr=args.critic_lr)
-        
 
         self.critic_target = QNetwork(num_states, num_goals, action_space.shape[0], args.hidden_size).to(self.device)
         hard_update(self.critic_target, self.critic)
@@ -32,8 +31,8 @@ class SAC(object):
             self.log_alpha = torch.zeros(1, requires_grad=True, device=self.device)
             self.alpha_optim = Adam([self.log_alpha], lr=args.lr)
 
-
-        self.policy = GaussianPolicy(num_states, num_goals, action_space.shape[0], args.hidden_size, action_space).to(self.device)
+        self.policy = GaussianPolicy(num_states, num_goals, action_space.shape[0], args.hidden_size, action_space).to(
+            self.device)
         self.policy_optim = Adam(self.policy.parameters(), lr=args.policy_lr)
 
     def select_action(self, state, goal, evaluate=False):
@@ -47,7 +46,8 @@ class SAC(object):
 
     def update_parameters(self, memory, batch_size, updates):
         # Sample a batch from memory
-        state_batch, goal_batch, action_batch, reward_batch, next_state_batch, mask_batch = memory.sample(batch_size=batch_size)
+        state_batch, goal_batch, action_batch, reward_batch, next_state_batch, mask_batch = memory.sample(
+            batch_size=batch_size)
 
         state_batch = torch.FloatTensor(state_batch).to(self.device)
         goal_batch = torch.FloatTensor(goal_batch).to(self.device)
@@ -60,8 +60,9 @@ class SAC(object):
             next_state_action, next_state_log_pi, _ = self.policy.sample(next_state_batch, goal_batch)
             qf1_next_target, qf2_next_target = self.critic_target(next_state_batch, goal_batch, next_state_action)
             min_qf_next_target = torch.min(qf1_next_target, qf2_next_target) - self.alpha * next_state_log_pi
-            next_q_value = reward_batch + mask_batch * self.gamma * (min_qf_next_target)
-        qf1, qf2 = self.critic(state_batch, goal_batch, action_batch)  # Two Q-functions to mitigate positive bias in the policy improvement step
+            next_q_value = reward_batch + mask_batch * self.gamma * min_qf_next_target
+        qf1, qf2 = self.critic(state_batch, goal_batch,
+                               action_batch)  # Two Q-functions to mitigate positive bias in the policy improvement step
         qf1_loss = F.mse_loss(qf1, next_q_value)  # JQ = 𝔼(st,at)~D[0.5(Q1(st,at) - r(st,at) - γ(𝔼st+1~p[V(st+1)]))^2]
         qf2_loss = F.mse_loss(qf2, next_q_value)  # JQ = 𝔼(st,at)~D[0.5(Q1(st,at) - r(st,at) - γ(𝔼st+1~p[V(st+1)]))^2]
         qf_loss = qf1_loss + qf2_loss
@@ -75,7 +76,8 @@ class SAC(object):
         qf1_pi, qf2_pi = self.critic(state_batch, goal_batch, pi)
         min_qf_pi = torch.min(qf1_pi, qf2_pi)
 
-        policy_loss = ((self.alpha * log_pi) - min_qf_pi).mean() # Jπ = 𝔼st∼D,εt∼N[α * logπ(f(εt;st)|st) − Q(st,f(εt;st))]
+        # Jπ = 𝔼st∼D,εt∼N[α * logπ(f(εt;st)|st) − Q(st,f(εt;st))]
+        policy_loss = ((self.alpha * log_pi) - min_qf_pi).mean()
 
         # high level regularization
         if self.label == 'high':
@@ -94,11 +96,10 @@ class SAC(object):
             self.alpha_optim.step()
 
             self.alpha = self.log_alpha.exp()
-            alpha_tlogs = self.alpha.clone() # For TensorboardX logs
+            alpha_tlogs = self.alpha.clone()  # For TensorboardX logs
         else:
             alpha_loss = torch.tensor(0.).to(self.device)
-            alpha_tlogs = torch.tensor(self.alpha) # For TensorboardX logs
-
+            alpha_tlogs = torch.tensor(self.alpha)  # For TensorboardX logs
 
         if updates % self.target_update_interval == 0:
             soft_update(self.critic_target, self.critic, self.tau)
@@ -120,7 +121,7 @@ class SAC(object):
         ckpt_path = path + '/' + '{}_{}.torch'.format(i_episode, level)
         print('Loading models from {}'.format(ckpt_path))
         if ckpt_path is not None:
-            checkpoint = torch.load(ckpt_path, map_location = 'cuda:0')
+            checkpoint = torch.load(ckpt_path, map_location='cuda:0')
             self.policy.load_state_dict(checkpoint['policy_state_dict'])
             self.critic.load_state_dict(checkpoint['critic_state_dict'])
             self.critic_target.load_state_dict(checkpoint['critic_target_state_dict'])

@@ -2,12 +2,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.distributions import Normal
-from copy import copy, deepcopy
-import numpy as np
+
+# from copy import copy, deepcopy
+# import numpy as np
 
 LOG_SIG_MAX = 2
 LOG_SIG_MIN = -20
 epsilon = 1e-6
+
 
 # Initialize Policy weights
 def weights_init_(m):
@@ -16,6 +18,8 @@ def weights_init_(m):
         torch.nn.init.constant_(m.bias, 0)
 
 
+# 2024-9-14 14:01:35
+# 这个没用到啊
 class ValueNetwork(nn.Module):
     def __init__(self, num_inputs, num_goals, hidden_dim):
         super(ValueNetwork, self).__init__()
@@ -51,7 +55,7 @@ class QNetwork(nn.Module):
 
     def forward(self, state, goal, action):
         xu = torch.cat([state, goal, action], 1)
-        
+
         x1 = F.relu(self.linear1(xu))
         x1 = F.relu(self.linear2(x1))
         x1 = self.linear3(x1)
@@ -66,7 +70,7 @@ class QNetwork(nn.Module):
 class GaussianPolicy(nn.Module):
     def __init__(self, num_inputs, num_goals, num_actions, hidden_dim, action_space=None):
         super(GaussianPolicy, self).__init__()
-        
+
         self.linear1 = nn.Linear(num_inputs + num_goals, hidden_dim)
         self.linear2 = nn.Linear(hidden_dim, hidden_dim)
 

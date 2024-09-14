@@ -15,7 +15,7 @@ from .model.sac import SAC
 from .utils.replaybuffer import ReplayMemory
 from .algo import Algo
 
-import ipdb
+# import ipdb
 
 
 def get_env_params(env, args):
@@ -60,10 +60,12 @@ def launch(args):
 
     # suppose subgoal_space = goal_space
     if args.env_name in ['Pusher-v0', 'Reacher3D-v0', 'AntMazeBottleneck-v0']:
-        high_agent = SAC(env.observation_space['observation'].shape[0], env.goal_space.shape[0], env.goal_space, args,
-                         'high')
-        low_agent = SAC(env.observation_space['observation'].shape[0], env.goal_space.shape[0], env.action_space, args,
-                        'low')
+        high_agent = SAC(env.observation_space['observation'].shape[0],
+                         env.goal_space.shape[0], env.goal_space,
+                         args, 'high')
+        low_agent = SAC(env.observation_space['observation'].shape[0],
+                        env.goal_space.shape[0], env.action_space,
+                        args, 'low')
     else:
         high_agent = SAC(env.observation_space.shape[0], env.goal_space.shape[0], env.goal_space, args, 'high')
         low_agent = SAC(env.observation_space.shape[0], env.goal_space.shape[0], env.action_space, args, 'low')
@@ -86,8 +88,7 @@ def launch(args):
     low_replay = ReplayMemory(args.low_replay_size, args.seed)
 
     algo = Algo(
-        env=env, env_params=env_params, args=args,
-        test_env=test_env,
+        env=env, env_params=env_params, args=args, test_env=test_env,
         low_agent=low_agent, high_agent=high_agent, low_replay=low_replay, high_replay=high_replay,
         low_reward_func=low_reward_func, high_reward_func=high_reward_func
     )
