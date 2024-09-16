@@ -9,12 +9,11 @@ from .utils.replaybuffer import ReplayMemory
 
 
 class Algo:
-    def __init__(
-            self,
-            env, env_params, args,
-            test_env, low_agent, high_agent, low_replay, high_replay,
-            low_reward_func, high_reward_func
-    ):
+    def __init__(self,
+                 env, env_params, args,
+                 test_env, low_agent, high_agent, low_replay, high_replay,
+                 low_reward_func, high_reward_func
+                 ):
         self.env = env
         self.test_env = test_env
         self.env_params = env_params
