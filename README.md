@@ -17,6 +17,6 @@
 | IQ-Learn: Inverse soft-Q Learning for Imitation              | IQLearn | 2021                | NeurIPS(CCF A)                             |                                                              |
 | Anchor: The achieved goal to replace the subgoal for hierarchical reinforcement learning | AHRL    | 2021.8              | Knowledge-Based Systems(中科院1区，JCR Q1) | 这里的环境都是他魔改过的，不知道如何扩展到其他的环境，第三个测试任务已经趋于完美了。 |
 | Clustering experience replay for the effective exploitation in reinforcement learning | TD3CER  | 2022.11             | Pattern Recognition(中科院1区)             |                                                              |
-| Robust Policy Optimization in Deep Reinforcement Learning    | RPO     | 2022.12             | arXiv                                      | 从这里的源代码 CleanRL 中知道了                              |
+| Robust Policy Optimization in Deep Reinforcement Learning    | RPO     | 2022.12             | arXiv                                      | 从这里的源代码 CleanRL 中知道了 `args = tyro.cli(Args)`      |
 | Bidirectional-Reachable Hierarchical Reinforcement Learning with Mutually Responsive Policies | BrHPO   | 2024                | RLC                                        | 有源代码都跑不出文章中的效果，AntMaze、AntPush、AntFall在3e6步数下的成功率直接全部为0，而且 main.py 只开放了五个环境的测试，文章中却有6个任务的测试数据，多的那一个是 AntBigMaze。 |
 
