@@ -1,3 +1,8 @@
+```
+Clustering experience replay for the effective exploitation in reinforcement learning
+Pattern Recognition(中科院1区) 2022
+```
+
 # 链接
 
 [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0031320322003569)

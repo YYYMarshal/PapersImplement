@@ -1,3 +1,8 @@
+```
+Anchor: The achieved goal to replace the subgoal for hierarchical reinforcement learning
+Knowledge-Based Systems(中科院1区，JCR Q1) 2021
+```
+
 # 链接
 
 ScienceDirect：https://www.sciencedirect.com/science/article/pii/S0950705121003919

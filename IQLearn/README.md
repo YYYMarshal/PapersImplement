@@ -1,5 +1,6 @@
 ```
 IQ-Learn: Inverse soft-Q Learning for Imitation
+NeurIPS(CCF A) 2021
 ```
 
 # 链接
