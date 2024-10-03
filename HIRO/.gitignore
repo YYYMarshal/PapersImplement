@@ -3,3 +3,6 @@
 .vscode
 __pycach__/
 test/*
+
+experiments.csv
+log

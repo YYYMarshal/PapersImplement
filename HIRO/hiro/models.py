@@ -17,6 +17,7 @@ import torch.nn.functional as F
 from .utils import get_tensor
 from hiro.hiro_utils import LowReplayBuffer, HighReplayBuffer, ReplayBuffer, Subgoal
 from hiro.utils import _is_update
+import gym
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
