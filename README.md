@@ -11,12 +11,14 @@
 
 # 论文与文件夹的对应表
 
-| 论文                                                         | 文件夹  | 发表时间            | 期刊/会议/出版社                           | 备注                                                         |
-| ------------------------------------------------------------ | ------- | ------------------- | ------------------------------------------ | ------------------------------------------------------------ |
-| Learning Multi-Level Hierarchies with Hindsight              | HAC     | 2017(v1) - 2019(v5) | arXiv                                      | PyTorch 版的代码是非官方的，代码中只给了自定义的 MountainCarContinuous 环境，issues 中给了自定义的 Pendulum 环境，原文中的几个环境如何修改并未提及，所以我没法测试原文中的几个环境。 |
-| IQ-Learn: Inverse soft-Q Learning for Imitation              | IQLearn | 2021                | NeurIPS(CCF A)                             |                                                              |
-| Anchor: The achieved goal to replace the subgoal for hierarchical reinforcement learning | AHRL    | 2021.8              | Knowledge-Based Systems(中科院1区，JCR Q1) | 这里的环境都是他魔改过的，不知道如何扩展到其他的环境，第三个测试任务已经趋于完美了。 |
-| Clustering experience replay for the effective exploitation in reinforcement learning | TD3CER  | 2022.11             | Pattern Recognition(中科院1区)             |                                                              |
-| Robust Policy Optimization in Deep Reinforcement Learning    | RPO     | 2022.12             | arXiv                                      | 从这里的源代码 CleanRL 中知道了 `args = tyro.cli(Args)`      |
-| Bidirectional-Reachable Hierarchical Reinforcement Learning with Mutually Responsive Policies | BrHPO   | 2024                | RLC                                        | 有源代码都跑不出文章中的效果，AntMaze、AntPush、AntFall在3e6步数下的成功率直接全部为0，而且 main.py 只开放了五个环境的测试，文章中却有6个任务的测试数据，多的那一个是 AntBigMaze。 |
+| 论文                                                         | 文件夹   | 发表时间            | 期刊/会议/出版社                           | 备注                                                         |
+| ------------------------------------------------------------ | -------- | ------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| Learning Multi-Level Hierarchies with Hindsight              | HAC      | 2017(v1) - 2019(v5) | arXiv                                      | PyTorch 版的代码是非官方的，代码中只给了自定义的 MountainCarContinuous 环境，issues 中给了自定义的 Pendulum 环境，原文中的几个环境如何修改并未提及，所以我没法测试原文中的几个环境。 |
+| The Option-Critic Architecture                               | ==OC==   | 2017                | AAAI                                       |                                                              |
+| Data-Efficient Hierarchical Reinforcement Learning           | ==HIRO== | 2018                | NeurIPS                                    |                                                              |
+| IQ-Learn: Inverse soft-Q Learning for Imitation              | IQLearn  | 2021                | NeurIPS(CCF A)                             |                                                              |
+| Anchor: The achieved goal to replace the subgoal for hierarchical reinforcement learning | AHRL     | 2021.8              | Knowledge-Based Systems(中科院1区，JCR Q1) | 这里的环境都是他魔改过的，不知道如何扩展到其他的环境，第三个测试任务已经趋于完美了。 |
+| Clustering experience replay for the effective exploitation in reinforcement learning | TD3CER   | 2022.11             | Pattern Recognition(中科院1区)             |                                                              |
+| Robust Policy Optimization in Deep Reinforcement Learning    | RPO      | 2022.12             | arXiv                                      | 从这里的源代码 CleanRL 中知道了 `args = tyro.cli(Args)`      |
+| Bidirectional-Reachable Hierarchical Reinforcement Learning with Mutually Responsive Policies | BrHPO    | 2024                | RLC                                        | 有源代码都跑不出文章中的效果，AntMaze、AntPush、AntFall在3e6步数下的成功率直接全部为0，而且 main.py 只开放了五个环境的测试，文章中却有6个任务的测试数据，多的那一个是 AntBigMaze。 |
 
