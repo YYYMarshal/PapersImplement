@@ -33,8 +33,8 @@ class FrameStack(FrameStack_):
         assert len(self.frames) == self.k
         return LazyFrames(list(self.frames))
 
-def make_env(env_name):
 
+def make_env(env_name):
     if env_name == 'fourrooms':
         return Fourrooms(), False
 
@@ -45,6 +45,7 @@ def make_env(env_name):
         env = TransformReward(env, lambda r: np.clip(r, -1, 1))
         env = FrameStack(env, 4)
     return env, is_atari
+
 
 def to_tensor(obs):
     obs = np.asarray(obs)

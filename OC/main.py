@@ -17,27 +17,30 @@ parser = argparse.ArgumentParser(description="Option Critic PyTorch")
 parser.add_argument('--env', default='CartPole-v0', help='ROM to run')
 parser.add_argument('--optimal-eps', type=float, default=0.05, help='Epsilon when playing optimally')
 parser.add_argument('--frame-skip', default=4, type=int, help='Every how many frames to process')
-parser.add_argument('--learning-rate',type=float, default=.0005, help='Learning rate')
+parser.add_argument('--learning-rate', type=float, default=.0005, help='Learning rate')
 parser.add_argument('--gamma', type=float, default=.99, help='Discount rate')
-parser.add_argument('--epsilon-start',  type=float, default=1.0, help=('Starting value for epsilon.'))
+parser.add_argument('--epsilon-start', type=float, default=1.0, help='Starting value for epsilon.')
 parser.add_argument('--epsilon-min', type=float, default=.1, help='Minimum epsilon.')
-parser.add_argument('--epsilon-decay', type=float, default=20000, help=('Number of steps to minimum epsilon.'))
-parser.add_argument('--max-history', type=int, default=10000, help=('Maximum number of steps stored in replay'))
+parser.add_argument('--epsilon-decay', type=float, default=20000, help='Number of steps to minimum epsilon.')
+parser.add_argument('--max-history', type=int, default=10000, help='Maximum number of steps stored in replay')
 parser.add_argument('--batch-size', type=int, default=32, help='Batch size.')
-parser.add_argument('--freeze-interval', type=int, default=200, help=('Interval between target freezes.'))
-parser.add_argument('--update-frequency', type=int, default=4, help=('Number of actions before each SGD update.'))
-parser.add_argument('--termination-reg', type=float, default=0.01, help=('Regularization to decrease termination prob.'))
-parser.add_argument('--entropy-reg', type=float, default=0.01, help=('Regularization to increase policy entropy.'))
-parser.add_argument('--num-options', type=int, default=2, help=('Number of options to create.'))
+parser.add_argument('--freeze-interval', type=int, default=200, help='Interval between target freezes.')
+parser.add_argument('--update-frequency', type=int, default=4, help='Number of actions before each SGD update.')
+parser.add_argument('--termination-reg', type=float, default=0.01,
+                    help='Regularization to decrease termination prob.')
+parser.add_argument('--entropy-reg', type=float, default=0.01, help='Regularization to increase policy entropy.')
+parser.add_argument('--num-options', type=int, default=2, help='Number of options to create.')
 parser.add_argument('--temp', type=float, default=1, help='Action distribution softmax tempurature param.')
 
 parser.add_argument('--max_steps_ep', type=int, default=18000, help='number of maximum steps per episode.')
-parser.add_argument('--max_steps_total', type=int, default=int(4e6), help='number of maximum steps to take.') # bout 4 million
+parser.add_argument('--max_steps_total', type=int, default=int(4e6),
+                    help='number of maximum steps to take.')  # bout 4 million
 parser.add_argument('--cuda', type=bool, default=True, help='Enable CUDA training (recommended if possible).')
 parser.add_argument('--seed', type=int, default=0, help='Random seed for numpy, torch, random.')
 parser.add_argument('--logdir', type=str, default='runs', help='Directory for logging statistics')
 parser.add_argument('--exp', type=str, default=None, help='optional experiment name')
 parser.add_argument('--switch-goal', type=bool, default=False, help='switch goal after 2k eps')
+
 
 def run(args):
     env, is_atari = make_env(args.env)
@@ -65,17 +68,19 @@ def run(args):
     env.seed(args.seed)
 
     buffer = ReplayBuffer(capacity=args.max_history, seed=args.seed)
-    logger = Logger(logdir=args.logdir, run_name=f"{OptionCriticFeatures.__name__}-{args.env}-{args.exp}-{time.ctime()}")
+    logger = Logger(logdir=args.logdir,
+                    run_name=f"{OptionCriticFeatures.__name__}-{args.env}-{args.exp}-{time.ctime()}")
 
-    steps = 0 ;
+    steps = 0
     if args.switch_goal: print(f"Current goal {env.goal}")
     while steps < args.max_steps_total:
 
-        rewards = 0 ; option_lengths = {opt:[] for opt in range(args.num_options)}
+        rewards = 0
+        option_lengths = {opt: [] for opt in range(args.num_options)}
 
-        obs   = env.reset()
+        obs = env.reset()
         state = option_critic.get_state(to_tensor(obs))
-        greedy_option  = option_critic.greedy_option(state)
+        greedy_option = option_critic.greedy_option(state)
         current_option = 0
 
         # Goal switching experiment: run for 1k episodes in fourrooms, switch goals and run for another
@@ -84,17 +89,20 @@ def run(args):
         if args.switch_goal and logger.n_eps == 1000:
             torch.save({'model_params': option_critic.state_dict(),
                         'goal_state': env.goal},
-                        f'models/option_critic_seed={args.seed}_1k')
+                       f'models/option_critic_seed={args.seed}_1k')
             env.switch_goal()
             print(f"New goal {env.goal}")
 
         if args.switch_goal and logger.n_eps > 2000:
             torch.save({'model_params': option_critic.state_dict(),
                         'goal_state': env.goal},
-                        f'models/option_critic_seed={args.seed}_2k')
+                       f'models/option_critic_seed={args.seed}_2k')
             break
 
-        done = False ; ep_steps = 0 ; option_termination = True ; curr_op_len = 0
+        done = False
+        ep_steps = 0
+        option_termination = True
+        curr_op_len = 0
         while not done and ep_steps < args.max_steps_ep:
             epsilon = option_critic.epsilon
 
@@ -102,7 +110,7 @@ def run(args):
                 option_lengths[current_option].append(curr_op_len)
                 current_option = np.random.choice(args.num_options) if np.random.rand() < epsilon else greedy_option
                 curr_op_len = 0
-    
+
             action, logp, entropy = option_critic.get_action(state, current_option)
 
             next_obs, reward, done, _ = env.step(action)
@@ -111,8 +119,8 @@ def run(args):
 
             actor_loss, critic_loss = None, None
             if len(buffer) > args.batch_size:
-                actor_loss = actor_loss_fn(obs, current_option, logp, entropy, \
-                    reward, done, next_obs, option_critic, option_critic_prime, args)
+                actor_loss = actor_loss_fn(obs, current_option, logp, entropy,
+                                           reward, done, next_obs, option_critic, option_critic_prime, args)
                 loss = actor_loss
 
                 if steps % args.update_frequency == 0:
@@ -140,6 +148,11 @@ def run(args):
 
         logger.log_episode(steps, rewards, option_lengths, ep_steps, epsilon)
 
-if __name__=="__main__":
+
+def main():
     args = parser.parse_args()
     run(args)
+
+
+if __name__ == "__main__":
+    main()

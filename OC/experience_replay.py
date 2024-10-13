@@ -2,6 +2,7 @@ import numpy as np
 import random
 from collections import deque
 
+
 class ReplayBuffer(object):
     def __init__(self, capacity, seed=42):
         self.rng = random.SystemRandom(seed)
