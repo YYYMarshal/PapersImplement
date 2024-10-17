@@ -9,6 +9,8 @@ Paper: https://papers.nips.cc/paper_files/paper/2023/hash/0252a434b18962c94910c0
 
 GitHub: https://github.com/jangwonkim-cocel/BPQL/tree/main
 
+# 环境配置
+
 ```cmd
 # 3.8.10
 python == 3.8.19
