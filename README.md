@@ -2,7 +2,7 @@
 
 2023-9-25 20:48:13
 
-* 每篇文章的论文 arXiv 链接、GitHub 链接和 PapersWithCode 链接都放在了各自文件夹的 README.md 文件中。
+* 每篇文章的论文的链接、arXiv 链接、PapersWithCode 链接和 GitHub 链接都放在了各自文件夹的 README.md 文件中。
 * 各个文章对应的代码的环境配置，也在各自文件夹的 README.md 文件中。
 
 2024-5-18 22:15:55
@@ -60,7 +60,7 @@ conda activate PapersImplement
 
 首次环境配置才需要执行下面的命令，如果以后如果有 别的项目中的一些包 必须跟 下面中的包 有不一样的版本，那么直接用环境复制即可。
 
-### MuJoCo
+### 基本
 
 ```cmd
 pip install --upgrade pip setuptools==57.5.0
