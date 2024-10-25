@@ -5,7 +5,7 @@ import datetime
 import copy
 from envs import EnvWithGoal
 from envs.create_maze_env import create_maze_env
-from hiro.hiro_utils import Subgoal
+# from hiro.hiro_utils import Subgoal
 from hiro.utils import Logger, _is_update, record_experience_to_csv, listdirs
 from hiro.models import HiroAgent, TD3Agent
 
@@ -25,7 +25,7 @@ def run_evaluation(args, env, agent):
         success=success_rate))
 
 
-class Trainer():
+class Trainer:
     def __init__(self, args, env, agent, experiment_name):
         self.args = args
         self.env = env
@@ -77,10 +77,10 @@ class Trainer():
         # Logs
         if global_step >= self.args.start_training_steps and _is_update(global_step, args.writer_freq):
             for k, v in losses.items():
-                self.logger.write('loss/%s' % (k), v, global_step)
+                self.logger.write('loss/%s' % k, v, global_step)
 
             for k, v in td_errors.items():
-                self.logger.write('td_error/%s' % (k), v, global_step)
+                self.logger.write('td_error/%s' % k, v, global_step)
 
     def evaluate(self, e):
         # Print

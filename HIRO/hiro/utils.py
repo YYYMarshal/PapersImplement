@@ -1,4 +1,4 @@
-import os 
+import os
 import csv
 import numpy as np
 import torch
@@ -6,11 +6,13 @@ from torch.utils.tensorboard import SummaryWriter
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 def var(tensor):
     if torch.cuda.is_available():
         return tensor.cuda()
     else:
         return tensor
+
 
 def get_tensor(z):
     if len(z.shape) == 1:
@@ -18,7 +20,8 @@ def get_tensor(z):
     else:
         return var(torch.FloatTensor(z.copy()))
 
-class Logger():
+
+class Logger:
     def __init__(self, log_path):
         self.writer = SummaryWriter(log_path)
 
@@ -32,13 +35,14 @@ class Logger():
     def write(self, name, value, index):
         self.writer.add_scalar(name, value, index)
 
+
 def _is_update(episode, freq, ignore=0, rem=0):
-    if episode!=ignore and episode%freq==rem:
+    if episode != ignore and episode % freq == rem:
         return True
     return False
 
 
-class ReplayBuffer():
+class ReplayBuffer:
     def __init__(self, state_dim, action_dim, buffer_size, batch_size):
         self.buffer_size = buffer_size
         self.batch_size = batch_size
@@ -59,8 +63,8 @@ class ReplayBuffer():
         self.reward[self.ptr] = reward
         self.not_done[self.ptr] = 1. - done
 
-        self.ptr = (self.ptr+1) % self.buffer_size
-        self.size = min(self.size+1, self.buffer_size)
+        self.ptr = (self.ptr + 1) % self.buffer_size
+        self.size = min(self.size + 1, self.buffer_size)
 
     def sample(self):
         ind = np.random.randint(0, self.size, size=self.batch_size)
@@ -72,6 +76,7 @@ class ReplayBuffer():
             torch.FloatTensor(self.reward[ind]).to(self.device),
             torch.FloatTensor(self.not_done[ind]).to(self.device),
         )
+
 
 def record_experience_to_csv(args, experiment_name, csv_name='experiments.csv'):
     # append DATE_TIME to dict
@@ -90,5 +95,6 @@ def record_experience_to_csv(args, experiment_name, csv_name='experiments.csv'):
             w.writeheader()
             w.writerow(d)
 
+
 def listdirs(directory):
- return [name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))]
+    return [name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))]
