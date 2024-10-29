@@ -56,7 +56,7 @@ conda create -n PapersImplement python=3.8
 conda activate PapersImplement
 ```
 
-## 环境配置
+## ==环境配置==
 
 首次环境配置才需要执行下面的命令，如果以后如果有 别的项目中的一些包 必须跟 下面中的包 有不一样的版本，那么直接用环境复制即可。
 
@@ -84,8 +84,13 @@ pip install patchelf==0.17.2.1
 
 ### 其他
 
-```cmd
+HIRO
 
+```cmd
+# 3.1.7, 3.1.7
+pip install PyOpenGL PyOpenGL_accelerate
+pip install tensorboard==2.14.0
+pip install six==1.16.0
 ```
 
 
@@ -144,7 +149,7 @@ conda deactivate
 conda remove -n PapersImplement --all
 ```
 
-## 环境复制
+## ==环境复制==
 
 ```cmd
 conda create -n XXX --clone PapersImplement

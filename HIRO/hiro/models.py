@@ -156,19 +156,19 @@ class TD3Controller(object):
             os.path.join(model_path, self.name + "_critic2.h5"))
         )
 
-    def _train(self, states, goals, actions, rewards, n_states, n_goals, not_done):
+    def _train(self, states, goals, actions, rewards, next_states, next_goals, not_done):
         self.total_it += 1
         with torch.no_grad():
             noise = (
                     torch.randn_like(actions) * self.policy_noise
             ).clamp(-self.noise_clip, self.noise_clip)
 
-            n_actions = self.actor_target(n_states, n_goals) + noise
-            n_actions = torch.min(n_actions, self.actor.scale)
-            n_actions = torch.max(n_actions, -self.actor.scale)
+            next_actions = self.actor_target(next_states, next_goals) + noise
+            next_actions = torch.min(next_actions, self.actor.scale)
+            next_actions = torch.max(next_actions, -self.actor.scale)
 
-            target_Q1 = self.critic1_target(n_states, n_goals, n_actions)
-            target_Q2 = self.critic2_target(n_states, n_goals, n_actions)
+            target_Q1 = self.critic1_target(next_states, next_goals, next_actions)
+            target_Q2 = self.critic2_target(next_states, next_goals, next_actions)
             target_Q = torch.min(target_Q1, target_Q2)
             target_Q_detached = (rewards + not_done * self.gamma * target_Q).detach()
 
@@ -271,8 +271,7 @@ class HigherController(TD3Controller):
 
         # Shape: (batch_size, 1, subgoal_dim)
         # diff = 1
-        diff_goal = (np.array(last_s) -
-                     np.array(first_s))[:, np.newaxis, :self.action_dim]
+        diff_goal = (np.array(last_s) - np.array(first_s))[:, np.newaxis, :self.action_dim]
 
         # Shape: (batch_size, 1, subgoal_dim)
         # original = 1
