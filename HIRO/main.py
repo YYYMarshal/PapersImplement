@@ -8,6 +8,7 @@ from envs.create_maze_env import create_maze_env
 # from hiro.hiro_utils import Subgoal
 from hiro.utils import Logger, _is_update, record_experience_to_csv, listdirs
 from hiro.models import HiroAgent, TD3Agent
+import Timer
 
 
 def run_evaluation(args, env, agent):
@@ -75,7 +76,7 @@ class Trainer:
         losses, td_errors = data[0], data[1]
 
         # Logs
-        if global_step >= self.args.start_training_steps and _is_update(global_step, args.writer_freq):
+        if global_step >= self.args.start_training_steps and _is_update(global_step, self.args.writer_freq):
             for k, v in losses.items():
                 self.logger.write('loss/%s' % k, v, global_step)
 
@@ -84,7 +85,7 @@ class Trainer:
 
     def evaluate(self, e):
         # Print
-        if _is_update(e, args.print_freq):
+        if _is_update(e, self.args.print_freq):
             agent = copy.deepcopy(self.agent)
             rewards, success_rate = agent.evaluate_policy(self.env)
             # rewards, success_rate = self.agent.evaluate_policy(self.env)
@@ -99,7 +100,7 @@ class Trainer:
                     success=success_rate))
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
 
     # Across All
@@ -196,3 +197,13 @@ if __name__ == '__main__':
         trainer.train()
     if args.eval:
         run_evaluation(args, env, agent)
+
+
+def timer_main():
+    start_time = Timer.get_current_time()
+    main()
+    Timer.time_difference(start_time)
+
+
+if __name__ == '__main__':
+    timer_main()
