@@ -9,10 +9,12 @@ class ReplayMemory:
         self.size = 0
         self.position = 0
 
-        self.augmented_state_buffer = np.empty(shape=(self.capacity, state_dim + action_dim * delayed_steps), dtype=np.float32)
+        self.augmented_state_buffer = np.empty(
+            shape=(self.capacity, state_dim + action_dim * delayed_steps), dtype=np.float32)
         self.action_buffer = np.empty(shape=(self.capacity, action_dim), dtype=np.float32)
         self.reward_buffer = np.empty(shape=(self.capacity, 1), dtype=np.float32)
-        self.next_augmented_state_buffer = np.empty(shape=(self.capacity, state_dim + action_dim * delayed_steps), dtype=np.float32)
+        self.next_augmented_state_buffer = np.empty(
+            shape=(self.capacity, state_dim + action_dim * delayed_steps), dtype=np.float32)
         self.done_buffer = np.empty(shape=(self.capacity, 1), dtype=np.float32)
         self.state_buffer = np.empty(shape=(self.capacity, state_dim), dtype=np.float32)
         self.next_state_buffer = np.empty(shape=(self.capacity, state_dim), dtype=np.float32)

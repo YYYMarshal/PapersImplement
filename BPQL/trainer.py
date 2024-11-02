@@ -46,27 +46,35 @@ class Trainer:
                 self.local_step += 1
                 self.total_step += 1
 
-                if self.local_step < self.total_delayed_steps:  # if t < d
-                    action = np.zeros_like(self.delayed_env.action_space.sample())  # Select the 'no-op' action
+                # if t < d
+                if self.local_step < self.total_delayed_steps:
+                    # Select the 'no-op' action
+                    action = np.zeros_like(self.delayed_env.action_space.sample())
                     _, _, _, _ = self.delayed_env.step(action)
 
                     self.agent.temporary_buffer.actions.append(action)
-                elif self.local_step == self.total_delayed_steps:  # if t == d
+                # if t == d
+                elif self.local_step == self.total_delayed_steps:
                     if self.total_step < self.start_step:
                         action = self.delayed_env.action_space.sample()
                     else:
-                        action = np.zeros_like(self.delayed_env.action_space.sample())  # Select the 'no-op' action
+                        # Select the 'no-op' action
+                        action = np.zeros_like(self.delayed_env.action_space.sample())
 
                     next_observed_state, _, _, _ = self.delayed_env.step(action)
                     #                s(1)       <-     Env: a(d)
-                    self.agent.temporary_buffer.actions.append(action)  # Put a(d) to the temporary buffer
-                    self.agent.temporary_buffer.states.append(next_observed_state)  # Put s(1) to the temporary buffer
-                else:  # if t > d
+                    # Put a(d) to the temporary buffer
+                    self.agent.temporary_buffer.actions.append(action)
+                    # Put s(1) to the temporary buffer
+                    self.agent.temporary_buffer.states.append(next_observed_state)
+                # if t > d
+                else:
                     last_observed_state = self.agent.temporary_buffer.states[-1]
                     first_action_idx = len(self.agent.temporary_buffer.actions) - self.total_delayed_steps
 
                     # Get the augmented state(t)
-                    augmented_state = self.agent.temporary_buffer.get_augmented_state(last_observed_state, first_action_idx)
+                    augmented_state = self.agent.temporary_buffer.get_augmented_state(
+                        last_observed_state, first_action_idx)
 
                     if self.total_step < self.start_step:
                         action = self.delayed_env.action_space.sample()
@@ -75,20 +83,26 @@ class Trainer:
                         # a(t) <- policy: augmented_state(t)
                     next_observed_state, reward, done, info = self.delayed_env.step(action)
                     #          s(t+1-d),  r(t-d)      <-      Env: a(t)
-                    true_done = 0.0 if self.local_step == self.delayed_env._max_episode_steps + self.args.obs_delayed_steps else float(done)
+                    true_done = 0.0 \
+                        if self.local_step == self.delayed_env._max_episode_steps + self.args.obs_delayed_steps \
+                        else float(done)
 
-                    self.agent.temporary_buffer.actions.append(action)  # Put a(t) to the temporary buffer
-                    self.agent.temporary_buffer.states.append(next_observed_state)  # Put s(t+1-d) to the temporary buffer
+                    # Put a(t) to the temporary buffer
+                    self.agent.temporary_buffer.actions.append(action)
+                    # Put s(t+1-d) to the temporary buffer
+                    self.agent.temporary_buffer.states.append(next_observed_state)
 
-                    if self.local_step > 2 * self.total_delayed_steps:  # if t > 2d
+                    # if t > 2d
+                    if self.local_step > 2 * self.total_delayed_steps:
                         augmented_s, s, a, next_augmented_s, next_s = self.agent.temporary_buffer.get_tuple()
                         #  aug_s(t-d),  s(t-d),  a(t-d),  aug_s(t+1-d),  s(t+1-d)  <- Temporal Buffer
                         self.agent.replay_memory.push(augmented_s, s, a, reward, next_augmented_s, next_s, true_done)
                         #  Store (aug_s(t-d), s(t-d), a(t-d), r(t-d), aug_s(t+1-d), s(t+1-d)) in the replay memory.
 
                 # Update parameters
-                if self.agent.replay_memory.size >= self.batch_size and self.total_step >= self.update_after and \
-                        self.total_step % self.update_every == 0:
+                if (self.agent.replay_memory.size >= self.batch_size
+                        and self.total_step >= self.update_after
+                        and self.total_step % self.update_every == 0):
                     total_actor_loss = 0
                     total_critic_loss = 0
                     total_log_alpha_loss = 0
@@ -139,8 +153,8 @@ class Trainer:
                 else:
                     last_observed_state = self.agent.eval_temporary_buffer.states[-1]
                     first_action_idx = len(self.agent.eval_temporary_buffer.actions) - self.total_delayed_steps
-                    augmented_state = self.agent.eval_temporary_buffer.get_augmented_state(last_observed_state,
-                                                                                          first_action_idx)
+                    augmented_state = self.agent.eval_temporary_buffer.get_augmented_state(
+                        last_observed_state, first_action_idx)
                     action = self.agent.get_action(augmented_state, evaluation=True)
                     next_observed_state, reward, done, _ = self.eval_delayed_env.step(action)
                     self.agent.eval_temporary_buffer.actions.append(action)
@@ -152,14 +166,4 @@ class Trainer:
         log_to_txt(self.args.env_name, self.args.random_seed, self.total_step, sum(reward_list) / len(reward_list))
         print("Eval  |  Total Steps {}  |  Episodes {}  |  Average Reward {:.2f}  |  Max reward {:.2f}  |  "
               "Min reward {:.2f}".format(self.total_step, self.episode, sum(reward_list) / len(reward_list),
-                                          max(reward_list), min(reward_list)))
-
-
-
-
-
-
-
-
-
-
+                                         max(reward_list), min(reward_list)))

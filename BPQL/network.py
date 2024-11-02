@@ -5,24 +5,24 @@ from torch.distributions import Normal
 from utils import weight_init
 
 
-class Twin_Q_net(nn.Module):
+class TwinQNet(nn.Module):
     def __init__(self, state_dim, action_dim, device, hidden_dims=(256, 256), activation_fc=F.relu):
-        super(Twin_Q_net, self).__init__()
+        super(TwinQNet, self).__init__()
         self.device = device
 
         self.activation_fc = activation_fc
 
         self.input_layer_A = nn.Linear(state_dim + action_dim, hidden_dims[0])
         self.hidden_layers_A = nn.ModuleList()
-        for i in range(len(hidden_dims)-1):
-            hidden_layer_A = nn.Linear(hidden_dims[i], hidden_dims[i+1])
+        for i in range(len(hidden_dims) - 1):
+            hidden_layer_A = nn.Linear(hidden_dims[i], hidden_dims[i + 1])
             self.hidden_layers_A.append(hidden_layer_A)
         self.output_layer_A = nn.Linear(hidden_dims[-1], 1)
 
         self.input_layer_B = nn.Linear(state_dim + action_dim, hidden_dims[0])
         self.hidden_layers_B = nn.ModuleList()
-        for i in range(len(hidden_dims)-1):
-            hidden_layer_B = nn.Linear(hidden_dims[i], hidden_dims[i+1])
+        for i in range(len(hidden_dims) - 1):
+            hidden_layer_B = nn.Linear(hidden_dims[i], hidden_dims[i + 1])
             self.hidden_layers_B.append(hidden_layer_B)
         self.output_layer_B = nn.Linear(hidden_dims[-1], 1)
         self.apply(weight_init)
@@ -70,8 +70,8 @@ class GaussianPolicy(nn.Module):
 
         self.input_layer = nn.Linear(state_dim + delayed_steps * action_dim, hidden_dims[0])
         self.hidden_layers = nn.ModuleList()
-        for i in range(len(hidden_dims)-1):
-            hidden_layer = nn.Linear(hidden_dims[i], hidden_dims[i+1])
+        for i in range(len(hidden_dims) - 1):
+            hidden_layer = nn.Linear(hidden_dims[i], hidden_dims[i + 1])
             self.hidden_layers.append(hidden_layer)
 
         self.mean_layer = nn.Linear(hidden_dims[-1], action_dim)
@@ -113,7 +113,3 @@ class GaussianPolicy(nn.Module):
         log_prob = log_prob.sum(dim=1, keepdim=True)
         mean = torch.tanh(mean) * self.action_rescale + self.action_rescale_bias
         return action, log_prob, mean
-
-
-
-

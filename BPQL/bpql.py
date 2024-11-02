@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from replay_memory import ReplayMemory
-from network import Twin_Q_net, GaussianPolicy
+from network import TwinQNet, GaussianPolicy
 from temporary_buffer import TemporaryBuffer
 from utils import hard_update, soft_update
 
@@ -15,7 +15,9 @@ class BPQLAgent:  # SAC for the base learning algorithm
         self.action_bound = action_bound
 
         self.device = device
-        self.replay_memory = ReplayMemory(args.obs_delayed_steps + args.act_delayed_steps, state_dim, action_dim, device, args.buffer_size)
+        self.replay_memory = ReplayMemory(
+            args.obs_delayed_steps + args.act_delayed_steps,
+            state_dim, action_dim, device, args.buffer_size)
         self.temporary_buffer = TemporaryBuffer(args.obs_delayed_steps + args.act_delayed_steps)
         self.eval_temporary_buffer = TemporaryBuffer(args.obs_delayed_steps + args.act_delayed_steps)
         self.batch_size = args.batch_size
@@ -23,9 +25,15 @@ class BPQLAgent:  # SAC for the base learning algorithm
         self.gamma = args.gamma
         self.tau = args.tau
 
-        self.actor = GaussianPolicy(args, args.obs_delayed_steps + args.act_delayed_steps, state_dim, action_dim, action_bound, args.hidden_dims, F.relu, device).to(device)
-        self.critic = Twin_Q_net(state_dim, action_dim, device, args.hidden_dims).to(device)  # Network for the beta Q-values.
-        self.target_critic = Twin_Q_net(state_dim, action_dim, device, args.hidden_dims).to(device)
+        self.actor = GaussianPolicy(
+            args, args.obs_delayed_steps + args.act_delayed_steps,
+            state_dim, action_dim, action_bound, args.hidden_dims,
+            F.relu, device).to(device)
+        # Network for the beta Q-values.
+        self.critic = TwinQNet(
+            state_dim, action_dim, device, args.hidden_dims).to(device)
+        self.target_critic = TwinQNet(
+            state_dim, action_dim, device, args.hidden_dims).to(device)
 
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=args.actor_lr)
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=args.critic_lr)
@@ -68,7 +76,7 @@ class BPQLAgent:  # SAC for the base learning algorithm
 
         return actor_loss.item(), alpha_loss.item()
 
-    def train_critic(self, actions, rewards, next_augmented_states, dones,  states, next_states):
+    def train_critic(self, actions, rewards, next_augmented_states, dones, states, next_states):
         self.critic_optimizer.zero_grad()
         with torch.no_grad():
             next_actions, next_log_pis, _ = self.actor.sample(next_augmented_states)
@@ -77,23 +85,28 @@ class BPQLAgent:  # SAC for the base learning algorithm
             target_q_values = rewards + (1 - dones) * self.gamma * next_q_values
 
         q_values_A, q_values_B = self.critic(states, actions)
-        critic_loss = ((q_values_A - target_q_values)**2).mean() + ((q_values_B - target_q_values)**2).mean()
+        critic_loss = ((q_values_A - target_q_values) ** 2).mean() + ((q_values_B - target_q_values) ** 2).mean()
 
         critic_loss.backward()
         self.critic_optimizer.step()
 
-        return critic_loss.item() # 2 * Squared-Loss = (2*|TD-error|^2)
+        # 2 * Squared-Loss = (2*|TD-error|^2)
+        return critic_loss.item()
 
     def train(self):
-        augmented_states, actions, rewards, next_augmented_states, dones, states, next_states = self.replay_memory.sample(self.batch_size)
+        (augmented_states, actions, rewards,
+         next_augmented_states, dones, states, next_states) = self.replay_memory.sample(self.batch_size)
 
-        critic_loss = self.train_critic(actions, rewards, next_augmented_states, dones, states, next_states)
+        critic_loss = self.train_critic(
+            actions, rewards, next_augmented_states,
+            dones, states, next_states)
         if self.args.automating_temperature is True:
-            actor_loss, log_alpha_loss = self.train_actor(augmented_states, states, train_alpha=True)
+            actor_loss, log_alpha_loss = self.train_actor(
+                augmented_states, states, train_alpha=True)
         else:
-            actor_loss, log_alpha_loss = self.train_actor(augmented_states, states, train_alpha=False)
+            actor_loss, log_alpha_loss = self.train_actor(
+                augmented_states, states, train_alpha=False)
 
         soft_update(self.critic, self.target_critic, self.tau)
 
         return critic_loss, actor_loss, log_alpha_loss
-

@@ -10,8 +10,10 @@ def main():
 
     parser.add_argument('--env-name', default='HalfCheetah-v3', type=str)
 
-    parser.add_argument('--obs-delayed-steps', default=4, type=int)  # Delayed timesteps (Observation, Reward)
-    parser.add_argument('--act-delayed-steps', default=5, type=int)  # Delayed timesteps (Action)
+    # Delayed timesteps (Observation, Reward)
+    parser.add_argument('--obs-delayed-steps', default=4, type=int)
+    # Delayed timesteps (Action)
+    parser.add_argument('--act-delayed-steps', default=5, type=int)
 
     parser.add_argument('--random-seed', default=-1, type=int)
     parser.add_argument('--eval_flag', default=True, type=bool)
@@ -41,24 +43,61 @@ def main():
     random_seed = set_seed(args.random_seed)
 
     # Create Delayed Environment
-    env, eval_env = make_delayed_env(args, random_seed, obs_delayed_steps=args.obs_delayed_steps,
+    env, eval_env = make_delayed_env(args, random_seed,
+                                     obs_delayed_steps=args.obs_delayed_steps,
                                      act_delayed_steps=args.act_delayed_steps)
 
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.shape[0]
     action_bound = [env.action_space.low[0], env.action_space.high[0]]
 
-    print(
-        f"Environment: {args.env_name}, Obs. Delayed Steps: {args.obs_delayed_steps}, Act. Delayed Steps: {args.act_delayed_steps}, Random Seed: {args.random_seed}",
-        "\n")
+    print(f"Environment: {args.env_name}, "
+          f"Obs. Delayed Steps: {args.obs_delayed_steps}, "
+          f"Act. Delayed Steps: {args.act_delayed_steps}, "
+          f"Random Seed: {args.random_seed}",
+          "\n")
 
     # Create Agent
-    agent = BPQLAgent(args, state_dim, action_dim, action_bound, env.action_space, device)
+    agent = BPQLAgent(args, state_dim, action_dim,
+                      action_bound, env.action_space, device)
 
     # Create Trainer & Train
     trainer = Trainer(env, eval_env, agent, args)
     trainer.train()
 
 
-if __name__ == '__main__':
+from datetime import datetime
+
+
+def get_current_time():
+    """
+    显示当前时间的时分秒格式
+    """
+    current_time = datetime.now()
+    # formatted_time = current_time.strftime("%H:%M:%S")
+    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+    print(f"当前时间：{formatted_time}")
+    return current_time
+
+
+def time_difference(start_time):
+    """
+    计算当前时间减去给定时间的时间差
+    """
+    current_time = get_current_time()
+    time_diff = current_time - start_time
+    print(f"用时：{time_diff}")
+    return time_diff
+
+
+def timer_main():
+    start_time = get_current_time()
     main()
+    # hidden_dims = (256, 256)
+    # print(len(hidden_dims))
+    # print(len(hidden_dims) - 1)
+    time_difference(start_time)
+
+
+if __name__ == '__main__':
+    timer_main()

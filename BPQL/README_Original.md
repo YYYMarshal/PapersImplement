@@ -25,8 +25,6 @@ numpy == 1.24.3
 
 ### or run main.py with arguments
 ```
-# 2024.10.11 晚上8:12才配置好环境，一开始是在终端上运行了几次，后来才到PyCharm上运行的，应该8:20吧，算正式开始。
-# 2024.10.12 早上10:30就已经跑完了。所以大概跑一次十三四个小时吧。
 python main.py --env-name HalfCheetah-v3 --random-seed 2023 --obs-delayed-steps 5 --act-delayed-steps 4 --max-step 1000000
 ```
 ---

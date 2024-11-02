@@ -31,4 +31,3 @@ class TemporaryBuffer:
         self.states.popleft()
         self.actions.popleft()
         return aug_s, s, a, next_aug_s, next_s
-
