@@ -93,9 +93,6 @@ def time_difference(start_time):
 def timer_main():
     start_time = get_current_time()
     main()
-    # hidden_dims = (256, 256)
-    # print(len(hidden_dims))
-    # print(len(hidden_dims) - 1)
     time_difference(start_time)
 
 
