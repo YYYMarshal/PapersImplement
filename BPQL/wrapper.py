@@ -43,7 +43,6 @@ class DelayedEnv(gym.Wrapper):
             delayed_action = action
 
         current_obs, current_reward, current_terminated, current_truncated, _ = self.env.step(delayed_action)
-        # current_obs, current_reward, current_terminated, current_truncated = self.env.step(delayed_action)
         current_done = current_terminated or current_truncated
 
         if self.obs_delayed_steps > 0:

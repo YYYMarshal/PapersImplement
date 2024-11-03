@@ -67,14 +67,15 @@ def make_delayed_env(args, random_seed, obs_delayed_steps, act_delayed_steps):
     env_name = args.env_name
 
     env = gym.make(env_name)
-    delayed_env = DelayedEnv(env, seed=random_seed,
+    delayed_env = DelayedEnv(env=env, seed=random_seed,
                              obs_delayed_steps=obs_delayed_steps, act_delayed_steps=act_delayed_steps)
 
     eval_env = gym.make(env_name)
-    eval_delayed_env = DelayedEnv(eval_env, seed=random_seed,
+    eval_delayed_env = DelayedEnv(env=eval_env, seed=random_seed,
                                   obs_delayed_steps=obs_delayed_steps, act_delayed_steps=act_delayed_steps)
 
     return delayed_env, eval_delayed_env
+
 
 def log_to_txt(env_name, random_seed, total_step, result):
     seed = '(' + str(random_seed) + ')'

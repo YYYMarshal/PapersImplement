@@ -61,8 +61,8 @@ class Trainer:
                         # Select the 'no-op' action
                         action = np.zeros_like(self.delayed_env.action_space.sample())
 
-                    next_observed_state, _, _, _ = self.delayed_env.step(action)
                     #                s(1)       <-     Env: a(d)
+                    next_observed_state, _, _, _ = self.delayed_env.step(action)
                     # Put a(d) to the temporary buffer
                     self.agent.temporary_buffer.actions.append(action)
                     # Put s(1) to the temporary buffer
@@ -79,10 +79,10 @@ class Trainer:
                     if self.total_step < self.start_step:
                         action = self.delayed_env.action_space.sample()
                     else:
-                        action = self.agent.get_action(augmented_state, evaluation=False)
                         # a(t) <- policy: augmented_state(t)
-                    next_observed_state, reward, done, info = self.delayed_env.step(action)
+                        action = self.agent.get_action(augmented_state, evaluation=False)
                     #          s(t+1-d),  r(t-d)      <-      Env: a(t)
+                    next_observed_state, reward, done, info = self.delayed_env.step(action)
                     true_done = 0.0 \
                         if self.local_step == self.delayed_env._max_episode_steps + self.args.obs_delayed_steps \
                         else float(done)
@@ -94,10 +94,10 @@ class Trainer:
 
                     # if t > 2d
                     if self.local_step > 2 * self.total_delayed_steps:
-                        augmented_s, s, a, next_augmented_s, next_s = self.agent.temporary_buffer.get_tuple()
                         #  aug_s(t-d),  s(t-d),  a(t-d),  aug_s(t+1-d),  s(t+1-d)  <- Temporal Buffer
-                        self.agent.replay_memory.push(augmented_s, s, a, reward, next_augmented_s, next_s, true_done)
+                        augmented_s, s, a, next_augmented_s, next_s = self.agent.temporary_buffer.get_tuple()
                         #  Store (aug_s(t-d), s(t-d), a(t-d), r(t-d), aug_s(t+1-d), s(t+1-d)) in the replay memory.
+                        self.agent.replay_memory.push(augmented_s, s, a, reward, next_augmented_s, next_s, true_done)
 
                 # Update parameters
                 if (self.agent.replay_memory.size >= self.batch_size
@@ -163,7 +163,10 @@ class Trainer:
 
             reward_list.append(episode_reward)
 
-        log_to_txt(self.args.env_name, self.args.random_seed, self.total_step, sum(reward_list) / len(reward_list))
-        print("Eval  |  Total Steps {}  |  Episodes {}  |  Average Reward {:.2f}  |  Max reward {:.2f}  |  "
-              "Min reward {:.2f}".format(self.total_step, self.episode, sum(reward_list) / len(reward_list),
-                                         max(reward_list), min(reward_list)))
+        log_to_txt(
+            self.args.env_name, self.args.random_seed,
+            self.total_step, sum(reward_list) / len(reward_list))
+        print("Eval  |  Total Steps {}  |  Episodes {}  |  Average Reward {:.2f}  |  "
+              "Max reward {:.2f}  |  Min reward {:.2f}".format(
+            self.total_step, self.episode, sum(reward_list) / len(reward_list),
+            max(reward_list), min(reward_list)))

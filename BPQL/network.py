@@ -68,7 +68,8 @@ class GaussianPolicy(nn.Module):
 
         self.activation_fc = activation_fc
 
-        self.input_layer = nn.Linear(state_dim + delayed_steps * action_dim, hidden_dims[0])
+        self.input_layer = nn.Linear(
+            state_dim + delayed_steps * action_dim, hidden_dims[0])
         self.hidden_layers = nn.ModuleList()
         for i in range(len(hidden_dims) - 1):
             hidden_layer = nn.Linear(hidden_dims[i], hidden_dims[i + 1])
@@ -77,8 +78,10 @@ class GaussianPolicy(nn.Module):
         self.mean_layer = nn.Linear(hidden_dims[-1], action_dim)
         self.log_std_layer = nn.Linear(hidden_dims[-1], action_dim)
 
-        self.action_rescale = torch.as_tensor((action_bound[1] - action_bound[0]) / 2., dtype=torch.float32)
-        self.action_rescale_bias = torch.as_tensor((action_bound[1] + action_bound[0]) / 2., dtype=torch.float32)
+        self.action_rescale = torch.as_tensor(
+            (action_bound[1] - action_bound[0]) / 2., dtype=torch.float32)
+        self.action_rescale_bias = torch.as_tensor(
+            (action_bound[1] + action_bound[0]) / 2., dtype=torch.float32)
 
         self.apply(weight_init)
 
@@ -108,8 +111,8 @@ class GaussianPolicy(nn.Module):
         bounded_action = torch.tanh(unbounded_action)
         action = bounded_action * self.action_rescale + self.action_rescale_bias
 
-        log_prob = distribution.log_prob(unbounded_action) - torch.log(self.action_rescale *
-                                                                       (1 - bounded_action.pow(2).clamp(0, 1)) + 1e-6)
+        log_prob = distribution.log_prob(unbounded_action) - torch.log(
+            self.action_rescale * (1 - bounded_action.pow(2).clamp(0, 1)) + 1e-6)
         log_prob = log_prob.sum(dim=1, keepdim=True)
         mean = torch.tanh(mean) * self.action_rescale + self.action_rescale_bias
         return action, log_prob, mean
