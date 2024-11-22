@@ -100,7 +100,7 @@ class Trainer:
                     success=success_rate))
 
 
-def main():
+def get_args():
     parser = argparse.ArgumentParser()
 
     # Across All
@@ -135,6 +135,11 @@ def main():
     parser.add_argument('--train_freq', default=10, type=int)
     parser.add_argument('--reward_scaling', default=0.1, type=float)
     args = parser.parse_args()
+    return args
+
+
+def main():
+    args = get_args()
 
     # Select or Generate a name for this experiment
     if args.exp_name:
